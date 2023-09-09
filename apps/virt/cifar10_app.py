@@ -1,6 +1,7 @@
 #
 import os
 import argparse
+import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -24,6 +25,19 @@ class Cifar10App(object):
         print(f'Visual RetNet for Cifar-10 v0.0.2')
         self.train()
         # self.eval()
+
+    # helper function to show an image
+    # (used in the `plot_classes_preds` function below)
+    @staticmethod
+    def matplotlib_imshow(img, one_channel=False):
+        if one_channel:
+            img = img.mean(dim=0)
+        img = img / 2 + 0.5     # unnormalize
+        npimg = img.numpy()
+        if one_channel:
+            plt.imshow(npimg, cmap="Greys")
+        else:
+            plt.imshow(np.transpose(npimg, (1, 2, 0)))
 
     def eval(self):
         #数据集加载
@@ -107,13 +121,19 @@ class Cifar10App(object):
         patience = 10 # 连续10个Epoch没有显著改善则停止训练
         improve_threshold = 0.00005 # 当改善小于此值认为没有明显改善
         run_epochs = 0 # 累积多少个Epoch没有改进
-        writer = SummaryWriter('cifar-10')
+        writer = SummaryWriter('./work/runs/cifar10')
         for epoch in range(Cifar10App.EPOCH):
             epoch_loss = 0.0
             epoch_cnt = 0
             for i,data in enumerate(train_loader):
                 #取出数据及标签
                 inputs,labels = data
+                # create grid of images
+                img_grid = torchvision.utils.make_grid(inputs)
+                # show images
+                Cifar10App.matplotlib_imshow(img_grid, one_channel=True)
+                # write to tensorboard
+                writer.add_image('picture1', img_grid)
                 #数据及标签均送入GPU或CPU
                 inputs,labels = inputs.to(device),labels.to(device)
                 #前向传播

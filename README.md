@@ -3,10 +3,7 @@ Visual RetNet for Cifar-10
 # 1. Setup Development Environment
 This project requires Pytorch 2.x version. Install dependencies:
 ```bash
-pyyam
-tensorboard
-transformers
-einops
+pip install -r requirements.txt
 ```
 ## 1.2. Prepare datasets
 We use cifar-10 dataset. Let's download and extract it:
@@ -22,6 +19,8 @@ cd /mnt/10t/yantao/adev/cv/virt
 python app_main.py --run_mode 1 # train
 python app_main.py --run_mode 2 # eval
 ```
+Note: the weights will be saved to work/ckpts folder. The weight file name format is: cifar10_<epoch>_<loss>_w.pt
+
 
 
 # Reference
